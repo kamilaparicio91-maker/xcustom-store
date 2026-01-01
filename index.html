@@ -4,7 +4,7 @@
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
   <title>XCUSTOM — Tienda Online</title>
-  <meta name="description" content="XCUSTOM: tienda online verde/negro con carrito y pago con tarjeta (Stripe)."/>
+  <meta name="description" content="XCUSTOM: tienda online verde/negro con carrito + pago con tarjeta (Stripe) + WhatsApp."/>
 
   <style>
     :root{
@@ -135,6 +135,7 @@
       border-color: var(--border);
       box-shadow: 0 16px 40px rgba(0,0,0,.35);
     }
+    .btn.danger{border-color: rgba(255,255,255,.10); background: rgba(255,0,0,.08)}
     .btn.small{padding:10px 12px; border-radius: 12px; font-size:13px}
 
     .panel{
@@ -260,6 +261,16 @@
     .totals{display:flex; justify-content:space-between; align-items:center;}
     .totals strong{color:var(--green)}
     .note{font-size:12px;color:var(--muted);line-height:1.35}
+    .warn{
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(255,180,0,.06);
+      padding:10px 12px;
+      border-radius:14px;
+      color: var(--muted);
+      font-size:12px;
+      line-height:1.35;
+      display:none;
+    }
     .toast{
       position:fixed; left:50%; bottom:16px;
       transform: translateX(-50%);
@@ -284,7 +295,7 @@
         <div class="logo" aria-hidden="true"></div>
         <div>
           <h1>XCUSTOM</h1>
-          <small>Tienda online • Verde/Negro • Pago con tarjeta (Stripe)</small>
+          <small>Tienda online • Verde/Negro • Pago con tarjeta + WhatsApp</small>
         </div>
       </div>
 
@@ -302,24 +313,29 @@
     <section class="hero">
       <div class="heroCard">
         <div class="heroInner">
-          <div class="kicker"><span class="dot"></span> Checkout seguro (Visa / MasterCard / Amex) con Stripe</div>
-          <h2 class="heroTitle">Compra en <span>XCUSTOM</span> 100% online.</h2>
+          <div class="kicker"><span class="dot"></span> Checkout seguro con Stripe (Visa / MasterCard / Amex)</div>
+          <h2 class="heroTitle">Compra en <span>XCUSTOM</span> sin complicarte.</h2>
           <p class="heroText">
-            Agrega productos al carrito y paga con tarjeta de forma segura usando Stripe.
-            No recogemos datos de tarjetas en esta web.
+            Agrega productos al carrito. Si quieres pagar con tarjeta, usamos enlaces de pago de Stripe (seguros).
+            Para pedidos múltiples o personalizados, finaliza por WhatsApp con el resumen del pedido.
           </p>
           <div class="row" style="margin-top:16px">
-            <button class="btn primary" id="goShop">Ver catálogo →</button>
+            <button class="btn primary" id="goShop">Comprar ahora →</button>
+            <button class="btn" id="goWhats">WhatsApp</button>
+            <button class="btn" id="goIG">Instagram</button>
           </div>
         </div>
       </div>
 
       <aside class="panel">
-        <h3>CONFIGURACIÓN</h3>
-        <p class="mini">En el JS cambia los <code>stripeLink</code> por tus Payment Links reales de Stripe.</p>
+        <h3>CONFIGURACIÓN RÁPIDA</h3>
+        <p class="mini">En el JS de abajo cambia:</p>
+        <p class="mini">• <code>WHATSAPP_NUMBER</code></p>
+        <p class="mini">• <code>INSTAGRAM_URL</code></p>
+        <p class="mini">• cada <code>stripeLink</code> (Payment Link de Stripe)</p>
         <div style="height:12px"></div>
-        <p>✅ Solo compras por la web</p>
-        <p>✅ Pagos con tarjeta: Stripe</p>
+        <p>✅ Tarjetas (Visa, etc.) se cobran en Stripe</p>
+        <p>✅ WhatsApp para pedidos múltiples/custom</p>
       </aside>
     </section>
 
@@ -327,7 +343,7 @@
       <div class="row">
         <div>
           <h3 style="margin:0; letter-spacing:.12em; color:var(--green)">CATÁLOGO</h3>
-          <p style="margin:6px 0 0; color:var(--muted); font-size:13px">Agrega al carrito y paga con tarjeta.</p>
+          <p style="margin:6px 0 0; color:var(--muted); font-size:13px">Agrega al carrito y paga con tarjeta o WhatsApp.</p>
         </div>
 
         <div class="row" style="min-width:min(560px, 100%); flex:1; justify-content:flex-end">
@@ -345,7 +361,7 @@
       <div class="grid" id="grid"></div>
     </section>
 
-    <div class="footer">© <span id="year"></span> XCUSTOM • Pagos con tarjeta por Stripe</div>
+    <div class="footer">© <span id="year"></span> XCUSTOM • GitHub Pages (front-end) + Stripe Links + WhatsApp</div>
   </main>
 
   <!-- Drawer carrito -->
@@ -366,7 +382,7 @@
 
       <div class="panel">
         <h3>DATOS (OPCIONAL)</h3>
-        <p class="mini">Esto es para tu control (no se envía a ningún lado).</p>
+        <p class="mini">Se usan para armar el resumen del pedido.</p>
         <div style="height:10px"></div>
 
         <label class="mini">Nombre</label>
@@ -375,6 +391,10 @@
         <div style="height:8px"></div>
         <label class="mini">Email</label>
         <input class="input" id="email" placeholder="tucorreo@gmail.com"/>
+
+        <div style="height:8px"></div>
+        <label class="mini">Notas del pedido</label>
+        <input class="input" id="notes" placeholder="Colores, server, detalles..."/>
       </div>
     </div>
 
@@ -384,10 +404,18 @@
         <strong id="total">$0</strong>
       </div>
 
+      <div class="warn" id="multiWarn">
+        Tu carrito tiene <b>varios productos</b>. En GitHub Pages (sin backend) el pago con tarjeta se hace por
+        <b>enlace por producto</b>. Para pagar todo junto, finaliza por WhatsApp o pide que te lo conecte con backend.
+      </div>
+
       <button class="btn primary" id="btnCardPay">Pagar con tarjeta 💳</button>
+      <button class="btn" id="btnWhatsPay">Finalizar por WhatsApp</button>
+      <button class="btn small" id="btnCopy">Copiar resumen</button>
+      <button class="btn small danger" id="btnClear">Vaciar carrito</button>
 
       <div class="note">
-        El botón te llevará al checkout seguro de Stripe.
+        Pago con tarjeta usa Stripe (seguro). Nunca recogemos números de tarjeta en esta web.
       </div>
     </div>
   </aside>
@@ -396,37 +424,15 @@
 
   <script>
     // =========================================================
-    // CONFIG (CAMBIA SOLO LOS LINKS DE STRIPE)
+    // 1) CONFIGURA AQUÍ (CAMBIA ESTO)
     // =========================================================
     const CURRENCY = "USD";
+    const WHATSAPP_NUMBER = "15551234567"; // <-- cambia: ej. 1786XXXXXXX (sin +, sin espacios)
+    const INSTAGRAM_URL = "https://instagram.com/tuinstagram"; // <-- cambia
 
-    // Payment Links (Stripe). Reemplaza cada uno por tu link real.
-    // Ejemplo: https://buy.stripe.com/xxxxxxxxxxxx
+    // Productos: agrega tu Stripe Payment Link por producto (Payment Links)
+    // Ejemplo de link: https://buy.stripe.com/xxxxxxxxxxxx
     const PRODUCTS = [
-      {
-        id:"logo_xcustom",
-        name:"Logo XCUSTOM (PNG)",
-        category:"logos",
-        price:15,
-        tag:"PNG",
-        desc:"Logo limpio para redes/servidor. Fondo transparente.",
-        stripeLink:"https://buy.stripe.com/REEMPLAZA_ESTE_LINK",
-        options:[
-          {key:"estilo", label:"Estilo", values:["Minimal","Graffiti","Patch/Embroidered"]}
-        ]
-      },
-      {
-        id:"banner_discord_web",
-        name:"Banner Discord / Web",
-        category:"addons",
-        price:12,
-        tag:"Add-on",
-        desc:"Banner para Discord, web o store (alta calidad).",
-        stripeLink:"https://buy.stripe.com/REEMPLAZA_ESTE_LINK",
-        options:[
-          {key:"medida", label:"Medida", values:["1920x1080","2560x1440","Custom"]}
-        ]
-      },
       {
         id:"hoodie_xcustom",
         name:"Hoodie XCUSTOM (Pack)",
@@ -442,11 +448,11 @@
       },
       {
         id:"chaleco",
-        name:"Chaleco",
+        name:"Chaleco (Custom)",
         category:"ropa",
         price:35,
         tag:"Custom",
-        desc:"Chaleco personalizado (según tu modelo).",
+        desc:"Chaleco + pistolera (según tu modelo).",
         stripeLink:"https://buy.stripe.com/REEMPLAZA_ESTE_LINK",
         options:[
           {key:"estilo", label:"Estilo", values:["Ligero","Pesado","Con parches"]},
@@ -454,12 +460,24 @@
         ]
       },
       {
+        id:"logo_xcustom",
+        name:"Logo XCUSTOM (PNG)",
+        category:"logos",
+        price:15,
+        tag:"PNG",
+        desc:"Logo limpio para redes/servidor. Fondo transparente.",
+        stripeLink:"https://buy.stripe.com/REEMPLAZA_ESTE_LINK",
+        options:[
+          {key:"estilo", label:"Estilo", values:["Minimal","Graffiti","Patch/Embroidered"]}
+        ]
+      },
+      {
         id:"texturas_cadenas",
-        name:"Texturas para cadenas",
+        name:"Pack de textura para cadenas",
         category:"packs",
-        price:25,
-        tag:"Pack",
-        desc:"Texturas diseñadas para cadenas (alta calidad).",
+        price:15,
+        tag:"YTD",
+        desc:"Texturas para cadenas (alta calidad).",
         stripeLink:"https://buy.stripe.com/REEMPLAZA_ESTE_LINK",
         options:[
           {key:"cantidad", label:"Cantidad", values:["5","10","20"]}
@@ -467,8 +485,10 @@
       }
     ];
 
+    const WA = (msg)=>`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`;
+
     // =========================================================
-    // LÓGICA
+    // 2) LÓGICA (NO TOCAR SI NO QUIERES)
     // =========================================================
     const $ = (q)=>document.querySelector(q);
     const grid = $("#grid");
@@ -479,6 +499,7 @@
     const emptyCart = $("#emptyCart");
     const totalEl = $("#total");
     const toast = $("#toast");
+    const multiWarn = $("#multiWarn");
 
     const state = {
       cart: loadCart(),
@@ -495,9 +516,9 @@
       clearTimeout(window.__t);
       window.__t=setTimeout(()=>toast.style.display="none", 1400);
     }
-    function saveCart(){ localStorage.setItem("xcustom_cart_cardonly_v1", JSON.stringify(state.cart)); }
+    function saveCart(){ localStorage.setItem("xcustom_cart_v3", JSON.stringify(state.cart)); }
     function loadCart(){
-      try{ return JSON.parse(localStorage.getItem("xcustom_cart_cardonly_v1")) || []; }
+      try{ return JSON.parse(localStorage.getItem("xcustom_cart_v3")) || []; }
       catch(e){ return []; }
     }
 
@@ -535,8 +556,15 @@
               ${optionHtml ? `<div style="display:grid; gap:10px">${optionHtml}</div>` : ""}
 
               <div class="row" style="margin-top:auto">
-                <span class="mini">Entrega: 24–72h</span>
+                <span class="mini">Pago tarjeta: Stripe</span>
                 <button class="btn primary" data-add="${escapeAttr(p.id)}">Agregar</button>
+              </div>
+
+              <div class="row">
+                <a class="btn small" href="${escapeAttr(p.stripeLink)}" target="_blank" rel="noopener">
+                  Pagar este producto 💳
+                </a>
+                <button class="btn small" data-waone="${escapeAttr(p.id)}">Pedir por WhatsApp</button>
               </div>
             </div>
           </article>
@@ -553,6 +581,15 @@
             if(sel) selected[opt.key] = sel.value;
           });
           addToCart(product, selected);
+        });
+      });
+
+      grid.querySelectorAll("[data-waone]").forEach(btn=>{
+        btn.addEventListener("click", ()=>{
+          const pid = btn.getAttribute("data-waone");
+          const product = PRODUCTS.find(x=>x.id===pid);
+          const msg = `Hola! Quiero este producto:\n- ${product.name}\nPrecio: ${money(product.price)}\n\n¿Disponible?`;
+          window.open(WA(msg), "_blank");
         });
       });
     }
@@ -598,9 +635,13 @@
       if(state.cart.length===0){
         cartItemsEl.innerHTML = "";
         emptyCart.style.display = "block";
+        multiWarn.style.display = "none";
         return;
       }
       emptyCart.style.display = "none";
+
+      const uniqueIds = new Set(state.cart.map(i=>i.id));
+      multiWarn.style.display = uniqueIds.size > 1 ? "block" : "none";
 
       cartItemsEl.innerHTML = state.cart.map(i=>{
         const optText = Object.keys(i.options||{}).length
@@ -612,6 +653,11 @@
               <b>${escapeHtml(i.name)}</b>
               <small>${escapeHtml(optText)}</small>
               <small style="margin-top:6px;color:var(--green)">${money(i.price)} c/u</small>
+              <div class="row" style="margin-top:10px">
+                <a class="btn small" href="${escapeAttr(i.stripeLink)}" target="_blank" rel="noopener">
+                  Pagar este ítem 💳
+                </a>
+              </div>
             </div>
             <div class="qty">
               <button aria-label="menos" data-q="-1" data-k="${escapeAttr(i.key)}">−</button>
@@ -631,27 +677,31 @@
       });
     }
 
-    // Pago con tarjeta:
-    // En GitHub Pages sin backend no podemos cobrar el total exacto del carrito en 1 solo pago dinámico.
-    // Por eso: si el carrito tiene 1 producto, abre su Stripe Payment Link.
-    // Si hay varios distintos, abrimos el Stripe Link del primer producto y avisamos.
-    function payWithCard(){
-      if(state.cart.length===0){ toastMsg("Carrito vacío"); return; }
+    function buildOrderSummary(){
+      const name = $("#name").value.trim();
+      const email = $("#email").value.trim();
+      const notes = $("#notes").value.trim();
+      const total = cartTotal();
 
-      // Si todos los items son el mismo producto id, OK.
-      const uniqueIds = new Set(state.cart.map(i=>i.id));
-      const first = state.cart[0];
-
-      if(!first.stripeLink || first.stripeLink.includes("REEMPLAZA_ESTE_LINK")){
-        toastMsg("Faltan links de Stripe");
-        return;
-      }
-
-      if(uniqueIds.size > 1){
-        alert("Tu carrito tiene varios productos. Sin backend, el pago con tarjeta se hace por producto (Payment Link). Te abriré el pago del primer producto. Puedes pagar los demás después.");
-      }
-
-      window.open(first.stripeLink, "_blank");
+      const lines = [];
+      lines.push("XCUSTOM — Pedido Online");
+      lines.push("-----------------------");
+      if(name) lines.push(`Nombre: ${name}`);
+      if(email) lines.push(`Email: ${email}`);
+      if(notes) lines.push(`Notas: ${notes}`);
+      lines.push("");
+      lines.push("Items:");
+      state.cart.forEach((i, idx)=>{
+        const opt = Object.keys(i.options||{}).length
+          ? " (" + Object.entries(i.options).map(([k,v])=>`${k}:${v}`).join(", ") + ")"
+          : "";
+        lines.push(`${idx+1}. ${i.name}${opt} x${i.qty} — ${money(i.price*i.qty)}`);
+      });
+      lines.push("");
+      lines.push(`TOTAL: ${money(total)}`);
+      lines.push("");
+      lines.push("Pago: Tarjeta (Stripe) o coordinar por WhatsApp.");
+      return lines.join("\n");
     }
 
     function escapeHtml(str){
@@ -661,8 +711,11 @@
     }
     function escapeAttr(str){ return String(str).replace(/"/g, "&quot;"); }
 
-    // Eventos UI
+    // =========================================================
+    // 3) EVENTOS UI
+    // =========================================================
     $("#year").textContent = new Date().getFullYear();
+
     $("#btnCarrito").addEventListener("click", openCart);
     $("#closeCart").addEventListener("click", closeCart);
     $("#backdrop").addEventListener("click", closeCart);
@@ -674,6 +727,13 @@
       document.getElementById("catalogo").scrollIntoView({behavior:"smooth"});
     });
 
+    $("#goWhats").addEventListener("click", ()=>{
+      window.open(WA("Hola! Quiero hacer un pedido en XCUSTOM."), "_blank");
+    });
+    $("#goIG").addEventListener("click", ()=>{
+      window.open(INSTAGRAM_URL, "_blank");
+    });
+
     $("#filter").addEventListener("change", (e)=>{
       state.filter = e.target.value;
       renderProducts();
@@ -683,7 +743,51 @@
       renderProducts();
     });
 
-    $("#btnCardPay").addEventListener("click", payWithCard);
+    $("#btnCardPay").addEventListener("click", ()=>{
+      if(state.cart.length===0){ toastMsg("Carrito vacío"); return; }
+      const uniqueIds = new Set(state.cart.map(i=>i.id));
+      if(uniqueIds.size > 1){
+        toastMsg("Varios productos: usa WhatsApp");
+        openCart();
+        return;
+      }
+      const first = state.cart[0];
+      if(!first.stripeLink || first.stripeLink.includes("REEMPLAZA_ESTE_LINK")){
+        toastMsg("Falta tu link de Stripe");
+        return;
+      }
+      window.open(first.stripeLink, "_blank");
+    });
+
+    $("#btnWhatsPay").addEventListener("click", ()=>{
+      if(state.cart.length===0){ toastMsg("Carrito vacío"); return; }
+      window.open(WA(buildOrderSummary()), "_blank");
+    });
+
+    $("#btnCopy").addEventListener("click", async ()=>{
+      if(state.cart.length===0){ toastMsg("Carrito vacío"); return; }
+      const msg = buildOrderSummary();
+      try{
+        await navigator.clipboard.writeText(msg);
+        toastMsg("Copiado ✅");
+      }catch(e){
+        const ta=document.createElement("textarea");
+        ta.value=msg;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand("copy");
+        ta.remove();
+        toastMsg("Copiado ✅");
+      }
+    });
+
+    $("#btnClear").addEventListener("click", ()=>{
+      state.cart = [];
+      saveCart();
+      renderCart();
+      renderCartBadge();
+      toastMsg("Carrito vacío ✅");
+    });
 
     // init
     renderProducts();
