@@ -1,0 +1,808 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>XCUSTOM — Tienda online</title>
+  <meta name="description" content="XCUSTOM: ropa personalizada para FiveM. Compra online." />
+
+  <style>
+    :root{
+      --bg:#070b08;
+      --card:#0d1510;
+      --card2:#0a100c;
+      --text:#e8f7ee;
+      --muted:#9ab6a6;
+      --green:#19ff6a;
+      --green2:#00c853;
+      --border:rgba(25,255,106,.18);
+      --shadow:0 16px 50px rgba(0,0,0,.55);
+      --radius:18px;
+      --max:1120px;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+      background: radial-gradient(1200px 600px at 20% -10%, rgba(25,255,106,.18), transparent 60%),
+                  radial-gradient(800px 500px at 90% 10%, rgba(0,200,83,.14), transparent 55%),
+                  var(--bg);
+      color:var(--text);
+    }
+    a{color:inherit;text-decoration:none}
+    .wrap{max-width:var(--max); margin:0 auto; padding:24px}
+    .topbar{
+      position:sticky; top:0; z-index:20;
+      backdrop-filter: blur(12px);
+      background: rgba(7,11,8,.72);
+      border-bottom: 1px solid rgba(255,255,255,.06);
+    }
+    header{
+      display:flex; gap:14px; align-items:center; justify-content:space-between;
+      padding:14px 24px;
+      max-width:var(--max); margin:0 auto;
+    }
+    .brand{
+      display:flex; align-items:center; gap:12px;
+      user-select:none;
+    }
+    .logo{
+      width:40px;height:40px;border-radius:12px;
+      background:
+        radial-gradient(12px 12px at 30% 30%, rgba(255,255,255,.35), transparent 60%),
+        linear-gradient(135deg, rgba(25,255,106,.32), rgba(0,200,83,.16));
+      border:1px solid var(--border);
+      box-shadow: 0 10px 30px rgba(0,0,0,.35);
+    }
+    .brand h1{
+      font-size:16px; margin:0; letter-spacing:.12em;
+    }
+    .brand small{display:block;color:var(--muted);letter-spacing:normal;margin-top:2px}
+    .nav{
+      display:flex; gap:10px; align-items:center;
+    }
+
+    .pill{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:10px 12px; border-radius:999px;
+      border:1px solid rgba(255,255,255,.08);
+      background: rgba(13,21,16,.65);
+      color:var(--text);
+      transition: transform .12s ease, border-color .12s ease;
+      cursor:pointer;
+    }
+    .pill:hover{transform: translateY(-1px); border-color: var(--border)}
+    .pill strong{color:var(--green)}
+    .pill .dot{
+      width:9px;height:9px;border-radius:50%;
+      background: var(--green);
+      box-shadow: 0 0 18px rgba(25,255,106,.65);
+    }
+
+    .hero{
+      padding:34px 0 18px;
+      display:grid;
+      grid-template-columns: 1.2fr .8fr;
+      gap:18px;
+      align-items:stretch;
+    }
+    @media (max-width: 900px){
+      .hero{grid-template-columns:1fr}
+    }
+    .heroCard{
+      border:1px solid rgba(255,255,255,.08);
+      background: linear-gradient(180deg, rgba(13,21,16,.8), rgba(10,16,12,.6));
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding:22px;
+      position:relative;
+      overflow:hidden;
+    }
+    .heroCard:before{
+      content:"";
+      position:absolute; inset:-2px;
+      background:
+        radial-gradient(700px 220px at 10% 0%, rgba(25,255,106,.22), transparent 55%),
+        radial-gradient(600px 220px at 90% 20%, rgba(0,200,83,.18), transparent 60%);
+      pointer-events:none;
+    }
+    .heroInner{position:relative}
+    .kicker{
+      display:inline-flex; gap:8px; align-items:center;
+      padding:8px 10px; border-radius:999px;
+      border:1px solid var(--border);
+      background: rgba(25,255,106,.08);
+      color:var(--text);
+      font-size:12px;
+    }
+    .kicker .dot{width:8px;height:8px;border-radius:50%;background:var(--green)}
+    .heroTitle{
+      margin:14px 0 10px;
+      font-size:34px; line-height:1.05;
+      letter-spacing:-.02em;
+    }
+    .heroTitle span{color:var(--green)}
+    .heroText{margin:0;color:var(--muted);max-width:60ch}
+    .heroActions{display:flex; gap:10px; margin-top:16px; flex-wrap:wrap}
+    .btn{
+      display:inline-flex; align-items:center; justify-content:center; gap:10px;
+      padding:12px 14px;
+      border-radius: 14px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(13,21,16,.65);
+      color: var(--text);
+      cursor:pointer;
+      transition: transform .12s ease, border-color .12s ease, background .12s ease;
+      user-select:none;
+    }
+    .btn:hover{transform: translateY(-1px); border-color: var(--border)}
+    .btn.primary{
+      background: linear-gradient(135deg, rgba(25,255,106,.28), rgba(0,200,83,.14));
+      border-color: var(--border);
+      box-shadow: 0 16px 40px rgba(0,0,0,.35);
+    }
+    .btn.primary strong{color:var(--green)}
+    .btn.ghost{background: rgba(10,16,12,.35)}
+    .panel{
+      border:1px solid rgba(255,255,255,.08);
+      background: rgba(13,21,16,.55);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding:18px;
+    }
+    .panel h3{margin:0 0 8px; font-size:14px; letter-spacing:.12em; color: var(--green)}
+    .panel p{margin:0;color:var(--muted); font-size:13px; line-height:1.45}
+    .grid{
+      display:grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap:14px;
+      margin-top:14px;
+    }
+    @media (max-width: 900px){ .grid{grid-template-columns: repeat(2,1fr)} }
+    @media (max-width: 560px){ .grid{grid-template-columns: 1fr} }
+    .card{
+      border:1px solid rgba(255,255,255,.08);
+      background: linear-gradient(180deg, rgba(13,21,16,.7), rgba(10,16,12,.45));
+      border-radius: var(--radius);
+      overflow:hidden;
+      box-shadow: 0 14px 40px rgba(0,0,0,.42);
+      display:flex;
+      flex-direction:column;
+      min-height: 320px;
+    }
+    .thumb{
+      height:140px;
+      background:
+        radial-gradient(40px 40px at 25% 30%, rgba(255,255,255,.14), transparent 60%),
+        radial-gradient(90px 70px at 80% 20%, rgba(25,255,106,.20), transparent 60%),
+        linear-gradient(135deg, rgba(25,255,106,.12), rgba(0,0,0,.1));
+      border-bottom: 1px solid rgba(255,255,255,.06);
+      position:relative;
+    }
+    .badge{
+      position:absolute; top:12px; left:12px;
+      padding:6px 10px;
+      border-radius:999px;
+      font-size:12px;
+      border:1px solid var(--border);
+      background: rgba(25,255,106,.08);
+      color: var(--text);
+    }
+    .cardBody{padding:14px; display:flex; flex-direction:column; gap:10px; flex:1}
+    .titleRow{display:flex; justify-content:space-between; gap:10px; align-items:flex-start}
+    .titleRow h4{margin:0; font-size:16px}
+    .price{color:var(--green); font-weight:700}
+    .desc{margin:0; color:var(--muted); font-size:13px; line-height:1.4}
+    .row{display:flex; gap:10px; align-items:center; justify-content:space-between}
+    .select, .input{
+      width:100%;
+      padding:10px 12px;
+      border-radius: 12px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(7,11,8,.45);
+      color: var(--text);
+      outline:none;
+    }
+    .select:focus, .input:focus{border-color: var(--border)}
+    .mini{font-size:12px; color: var(--muted)}
+    .footer{
+      margin:34px 0 10px;
+      color: var(--muted);
+      font-size:12px;
+      text-align:center;
+    }
+
+    /* Drawer cart */
+    .backdrop{
+      position:fixed; inset:0;
+      background: rgba(0,0,0,.55);
+      display:none;
+      z-index:50;
+    }
+    .drawer{
+      position:fixed;
+      top:0; right:0;
+      height:100%;
+      width:min(420px, 92vw);
+      background: rgba(7,11,8,.88);
+      backdrop-filter: blur(14px);
+      border-left: 1px solid rgba(255,255,255,.08);
+      box-shadow: -20px 0 60px rgba(0,0,0,.55);
+      transform: translateX(110%);
+      transition: transform .18s ease;
+      z-index:60;
+      display:flex;
+      flex-direction:column;
+    }
+    .drawer.open{transform: translateX(0)}
+    .backdrop.open{display:block}
+    .drawerHead{
+      padding:16px;
+      border-bottom:1px solid rgba(255,255,255,.08);
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+    }
+    .drawerHead h3{margin:0; font-size:14px; letter-spacing:.14em}
+    .drawerBody{padding:14px; overflow:auto; flex:1}
+    .cartItem{
+      border:1px solid rgba(255,255,255,.08);
+      background: rgba(13,21,16,.55);
+      border-radius: 14px;
+      padding:12px;
+      display:grid;
+      grid-template-columns: 1fr auto;
+      gap:10px;
+      margin-bottom:10px;
+    }
+    .cartItem b{color:var(--text)}
+    .cartItem small{display:block; color:var(--muted); margin-top:2px}
+    .qty{
+      display:flex; gap:8px; align-items:center; justify-content:flex-end;
+    }
+    .qty button{
+      width:32px; height:32px; border-radius:10px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(7,11,8,.45);
+      color: var(--text);
+      cursor:pointer;
+    }
+    .qty span{min-width:22px; text-align:center}
+    .drawerFoot{
+      border-top:1px solid rgba(255,255,255,.08);
+      padding:14px;
+      display:flex; flex-direction:column; gap:10px;
+    }
+    .totals{
+      display:flex; justify-content:space-between; align-items:center;
+      color: var(--text);
+    }
+    .totals strong{color:var(--green)}
+    .note{
+      font-size:12px; color:var(--muted); line-height:1.35;
+    }
+    .toast{
+      position:fixed;
+      left:50%; bottom:16px;
+      transform: translateX(-50%);
+      background: rgba(13,21,16,.85);
+      border:1px solid var(--border);
+      padding:10px 12px;
+      border-radius: 999px;
+      box-shadow: var(--shadow);
+      color: var(--text);
+      display:none;
+      z-index:80;
+      font-size:13px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="topbar">
+    <header>
+      <div class="brand">
+        <div class="logo" aria-hidden="true"></div>
+        <div>
+          <h1>XCUSTOM</h1>
+          <small>Ropa personalizada para FiveM • Online</small>
+        </div>
+      </div>
+
+      <div class="nav">
+        <button class="pill" id="btnCatalogo" title="Ir al catálogo">Catálogo</button>
+        <button class="pill" id="btnCarrito" title="Abrir carrito">
+          <span class="dot" aria-hidden="true"></span>
+          Carrito <strong id="cartCount">0</strong>
+        </button>
+      </div>
+    </header>
+  </div>
+
+  <main class="wrap">
+    <section class="hero">
+      <div class="heroCard">
+        <div class="heroInner">
+          <div class="kicker"><span class="dot"></span> Entregas digitales / packs para servidor RP</div>
+          <h2 class="heroTitle">Tu drip en <span>verde</span>. Tu estilo en FiveM.</h2>
+          <p class="heroText">
+            Compra packs de ropa, logos y personalizaciones. Agrega al carrito y finaliza tu pedido.
+            (Puedes conectar pagos reales luego con Stripe/PayPal.)
+          </p>
+          <div class="heroActions">
+            <button class="btn primary" id="goShop">Comprar ahora <strong>→</strong></button>
+            <button class="btn ghost" id="goWhats">Pedir por WhatsApp</button>
+            <button class="btn" id="goIG">Instagram</button>
+          </div>
+        </div>
+      </div>
+
+      <aside class="panel">
+        <h3>INFO RÁPIDA</h3>
+        <p>✅ Packs digitales (YTD/YDD/PNG) • ✅ Diseños personalizados • ✅ Soporte por DM</p>
+        <div style="height:12px"></div>
+        <p><b style="color:var(--text)">Horarios:</b> Lun–Sáb</p>
+        <p><b style="color:var(--text)">Entrega:</b> 24–72h (depende del pedido)</p>
+        <p><b style="color:var(--text)">Contacto:</b> WhatsApp / Instagram</p>
+        <div style="height:12px"></div>
+        <p class="mini">Edita productos y precios en el JS abajo (array <code>PRODUCTS</code>).</p>
+      </aside>
+    </section>
+
+    <section id="catalogo">
+      <div style="display:flex; gap:10px; align-items:center; justify-content:space-between; flex-wrap:wrap">
+        <div>
+          <h3 style="margin:0; letter-spacing:.12em; color:var(--green)">CATÁLOGO</h3>
+          <p style="margin:6px 0 0; color:var(--muted); font-size:13px">Elige tu producto, opciones y agrega al carrito.</p>
+        </div>
+
+        <div style="display:flex; gap:10px; align-items:center; min-width:min(520px, 100%); flex:1; justify-content:flex-end; flex-wrap:wrap">
+          <input class="input" id="search" placeholder="Buscar (hoodie, chaleco, logo...)" style="max-width:280px" />
+          <select class="select" id="filter" style="max-width:220px">
+            <option value="all">Todas las categorías</option>
+            <option value="ropa">Ropa</option>
+            <option value="logos">Logos</option>
+            <option value="packs">Packs</option>
+            <option value="addons">Add-ons</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="grid" id="grid"></div>
+    </section>
+
+    <div class="footer">
+      © <span id="year"></span> XCUSTOM • Hecho con estilo verde/negro • Front-end demo listo para conectar pagos.
+    </div>
+  </main>
+
+  <!-- Cart Drawer -->
+  <div class="backdrop" id="backdrop"></div>
+  <aside class="drawer" id="drawer" aria-label="Carrito">
+    <div class="drawerHead">
+      <h3>CARRITO</h3>
+      <button class="btn" id="closeCart">Cerrar ✕</button>
+    </div>
+
+    <div class="drawerBody">
+      <div id="cartItems"></div>
+
+      <div id="emptyCart" class="panel" style="display:none">
+        <h3>VACÍO</h3>
+        <p>Tu carrito está vacío. Agrega productos del catálogo.</p>
+      </div>
+
+      <div class="panel">
+        <h3>CHECKOUT</h3>
+        <p class="mini">Completa tus datos (esto se usa para armar el mensaje / resumen del pedido).</p>
+        <div style="height:10px"></div>
+
+        <label class="mini">Nombre</label>
+        <input class="input" id="name" placeholder="Tu nombre" />
+
+        <div style="height:8px"></div>
+        <label class="mini">Email</label>
+        <input class="input" id="email" placeholder="tucorreo@gmail.com" />
+
+        <div style="height:8px"></div>
+        <label class="mini">Notas del pedido</label>
+        <input class="input" id="notes" placeholder="Colores, server, detalles..." />
+      </div>
+    </div>
+
+    <div class="drawerFoot">
+      <div class="totals">
+        <span>Total</span>
+        <strong id="total">$0</strong>
+      </div>
+
+      <button class="btn primary" id="btnWhatsPay">Finalizar por WhatsApp</button>
+      <button class="btn" id="btnCopy">Copiar resumen del pedido</button>
+
+      <div class="note">
+        Para pagos con tarjeta: integra Stripe/PayPal (te lo puedo dejar listo si me dices cuál vas a usar).
+      </div>
+    </div>
+  </aside>
+
+  <div class="toast" id="toast">Listo ✅</div>
+
+  <script>
+    // ==========================
+    // 1) EDITA AQUÍ TUS PRODUCTOS
+    // ==========================
+    const CURRENCY = "USD";
+    const WHATSAPP_NUMBER = "15551234567"; // <--- CAMBIA: ej. 1786xxxxxxx (sin + ni espacios)
+    const INSTAGRAM_URL = "https://instagram.com/"; // <--- CAMBIA
+    const WHATSAPP_URL = (msg) => `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`;
+
+    const PRODUCTS = [
+      {
+        id: "hoodie_xcustom",
+        name: "Hoodie XCUSTOM (Pack)",
+        category: "ropa",
+        price: 25,
+        tag: "Popular",
+        desc: "Hoodie para FiveM + texturas (incluye variantes).",
+        options: [
+          { key: "talla", label: "Talla", values: ["S","M","L","XL"] },
+          { key: "color", label: "Color", values: ["Verde/Negro","Negro","Verde","Custom"] }
+        ]
+      },
+      {
+        id: "chaleco_tactico",
+        name: "Chaleco Táctico (Custom)",
+        category: "ropa",
+        price: 35,
+        tag: "Custom",
+        desc: "Chaleco + pistolera (según tu modelo).",
+        options: [
+          { key: "estilo", label: "Estilo", values: ["Ligero","Pesado","Con parches"] },
+          { key: "detalle", label: "Detalle", values: ["RTZ / Texto","Logo XCUSTOM","Full custom"] }
+        ]
+      },
+      {
+        id: "logo_xcustom",
+        name: "Logo XCUSTOM (PNG)",
+        category: "logos",
+        price: 15,
+        tag: "PNG",
+        desc: "Logo limpio para redes/servidor. Fondo transparente.",
+        options: [
+          { key: "estilo", label: "Estilo", values: ["Minimal","Graffiti","Patch/Embroidered"] }
+        ]
+      },
+      {
+        id: "pack_camisas",
+        name: "Pack Camisas (2 modelos)",
+        category: "packs",
+        price: 30,
+        tag: "Pack",
+        desc: "2 camisas listas para showcase / servidor.",
+        options: [
+          { key: "tema", label: "Tema", values: ["Verde/Negro","Neón","Oscuro","Custom"] }
+        ]
+      },
+      {
+        id: "banner_discord",
+        name: "Banner Discord / Web",
+        category: "addons",
+        price: 12,
+        tag: "Add-on",
+        desc: "Banner para Discord, web o store (alta calidad).",
+        options: [
+          { key: "medida", label: "Medida", values: ["1920x1080","2560x1440","Custom"] }
+        ]
+      },
+      {
+        id: "pack_texturas",
+        name: "Pack Texturas (YTD)",
+        category: "packs",
+        price: 28,
+        tag: "YTD",
+        desc: "Texturas listas (2048) para ropa / accesorios.",
+        options: [
+          { key: "cantidad", label: "Cantidad", values: ["5","10","20"] }
+        ]
+      }
+    ];
+
+    // ==========================
+    // 2) LÓGICA DE LA TIENDA
+    // ==========================
+    const $ = (q) => document.querySelector(q);
+    const grid = $("#grid");
+    const cartCount = $("#cartCount");
+    const drawer = $("#drawer");
+    const backdrop = $("#backdrop");
+    const cartItemsEl = $("#cartItems");
+    const emptyCart = $("#emptyCart");
+    const totalEl = $("#total");
+    const toast = $("#toast");
+
+    const state = {
+      cart: loadCart(),
+      filter: "all",
+      search: ""
+    };
+
+    function money(n){
+      return new Intl.NumberFormat("en-US", { style:"currency", currency: CURRENCY }).format(n);
+    }
+
+    function saveCart(){
+      localStorage.setItem("xcustom_cart_v1", JSON.stringify(state.cart));
+    }
+
+    function loadCart(){
+      try{
+        return JSON.parse(localStorage.getItem("xcustom_cart_v1")) || [];
+      }catch(e){
+        return [];
+      }
+    }
+
+    function toastMsg(msg="Listo ✅"){
+      toast.textContent = msg;
+      toast.style.display = "block";
+      clearTimeout(window.__t);
+      window.__t = setTimeout(()=> toast.style.display="none", 1400);
+    }
+
+    function openCart(){
+      drawer.classList.add("open");
+      backdrop.classList.add("open");
+      renderCart();
+    }
+    function closeCart(){
+      drawer.classList.remove("open");
+      backdrop.classList.remove("open");
+    }
+
+    function renderProducts(){
+      const items = PRODUCTS.filter(p=>{
+        const okCat = state.filter === "all" ? true : p.category === state.filter;
+        const q = state.search.trim().toLowerCase();
+        const okSearch = !q ? true : (p.name.toLowerCase().includes(q) || p.desc.toLowerCase().includes(q));
+        return okCat && okSearch;
+      });
+
+      grid.innerHTML = items.map(p=>{
+        const optionHtml = (p.options||[]).map(opt=>{
+          return `
+            <div>
+              <div class="mini" style="margin-bottom:6px">${opt.label}</div>
+              <select class="select" data-opt="${opt.key}" data-pid="${p.id}">
+                ${opt.values.map(v=>`<option value="${escapeHtml(v)}">${escapeHtml(v)}</option>`).join("")}
+              </select>
+            </div>
+          `;
+        }).join("");
+
+        return `
+          <article class="card">
+            <div class="thumb">
+              <div class="badge">${escapeHtml(p.tag || "XCUSTOM")}</div>
+            </div>
+            <div class="cardBody">
+              <div class="titleRow">
+                <h4>${escapeHtml(p.name)}</h4>
+                <div class="price">${money(p.price)}</div>
+              </div>
+              <p class="desc">${escapeHtml(p.desc)}</p>
+              ${optionHtml ? `<div style="display:grid; gap:10px">${optionHtml}</div>` : ""}
+              <div class="row" style="margin-top:auto">
+                <span class="mini">Entrega: 24–72h</span>
+                <button class="btn primary" data-add="${p.id}">Agregar</button>
+              </div>
+            </div>
+          </article>
+        `;
+      }).join("");
+
+      // Add handlers
+      grid.querySelectorAll("[data-add]").forEach(btn=>{
+        btn.addEventListener("click", ()=>{
+          const pid = btn.getAttribute("data-add");
+          const product = PRODUCTS.find(x=>x.id===pid);
+          const selected = {};
+          (product.options||[]).forEach(opt=>{
+            const sel = grid.querySelector(`select[data-pid="${pid}"][data-opt="${opt.key}"]`);
+            if(sel) selected[opt.key] = sel.value;
+          });
+          addToCart(product, selected);
+        });
+      });
+    }
+
+    function addToCart(product, selectedOptions){
+      // same product+options => increase qty
+      const key = product.id + "::" + JSON.stringify(selectedOptions || {});
+      const found = state.cart.find(i=> i.key === key);
+      if(found){
+        found.qty += 1;
+      }else{
+        state.cart.push({
+          key,
+          id: product.id,
+          name: product.name,
+          price: product.price,
+          options: selectedOptions || {},
+          qty: 1
+        });
+      }
+      saveCart();
+      renderCartBadge();
+      toastMsg("Agregado al carrito ✅");
+    }
+
+    function changeQty(key, delta){
+      const item = state.cart.find(i=>i.key===key);
+      if(!item) return;
+      item.qty += delta;
+      if(item.qty <= 0){
+        state.cart = state.cart.filter(i=>i.key!==key);
+      }
+      saveCart();
+      renderCart();
+      renderCartBadge();
+    }
+
+    function cartTotal(){
+      return state.cart.reduce((sum,i)=> sum + i.price*i.qty, 0);
+    }
+
+    function renderCartBadge(){
+      const count = state.cart.reduce((sum,i)=> sum + i.qty, 0);
+      cartCount.textContent = count;
+    }
+
+    function renderCart(){
+      renderCartBadge();
+      const total = cartTotal();
+      totalEl.textContent = money(total);
+
+      if(state.cart.length === 0){
+        cartItemsEl.innerHTML = "";
+        emptyCart.style.display = "block";
+        return;
+      }else{
+        emptyCart.style.display = "none";
+      }
+
+      cartItemsEl.innerHTML = state.cart.map(i=>{
+        const optText = Object.keys(i.options||{}).length
+          ? Object.entries(i.options).map(([k,v])=> `${k}: ${v}`).join(" • ")
+          : "Sin opciones";
+
+        return `
+          <div class="cartItem">
+            <div>
+              <b>${escapeHtml(i.name)}</b>
+              <small>${escapeHtml(optText)}</small>
+              <small style="margin-top:6px;color:var(--green)">${money(i.price)} c/u</small>
+            </div>
+            <div class="qty">
+              <button aria-label="menos" data-q="-1" data-k="${escapeAttr(i.key)}">−</button>
+              <span>${i.qty}</span>
+              <button aria-label="más" data-q="1" data-k="${escapeAttr(i.key)}">+</button>
+            </div>
+          </div>
+        `;
+      }).join("");
+
+      cartItemsEl.querySelectorAll("[data-q]").forEach(b=>{
+        b.addEventListener("click", ()=>{
+          const d = parseInt(b.getAttribute("data-q"), 10);
+          const k = b.getAttribute("data-k");
+          changeQty(k, d);
+        });
+      });
+    }
+
+    function buildOrderSummary(){
+      const name = $("#name").value.trim();
+      const email = $("#email").value.trim();
+      const notes = $("#notes").value.trim();
+      const total = cartTotal();
+
+      const lines = [];
+      lines.push("XCUSTOM — Pedido Online");
+      lines.push("-----------------------");
+      if(name) lines.push(`Nombre: ${name}`);
+      if(email) lines.push(`Email: ${email}`);
+      if(notes) lines.push(`Notas: ${notes}`);
+      lines.push("");
+      lines.push("Items:");
+      state.cart.forEach((i, idx)=>{
+        const opt = Object.keys(i.options||{}).length
+          ? " (" + Object.entries(i.options).map(([k,v])=>`${k}:${v}`).join(", ") + ")"
+          : "";
+        lines.push(`${idx+1}. ${i.name}${opt} x${i.qty} — ${money(i.price*i.qty)}`);
+      });
+      lines.push("");
+      lines.push(`TOTAL: ${money(total)}`);
+      lines.push("");
+      lines.push("¿Cómo deseas pagar? (Tarjeta/PayPal/Transferencia)");
+      return lines.join("\n");
+    }
+
+    function escapeHtml(str){
+      return String(str).replace(/[&<>"']/g, s => ({
+        "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
+      }[s]));
+    }
+    function escapeAttr(str){
+      return String(str).replace(/"/g, "&quot;");
+    }
+
+    // ==========================
+    // 3) EVENTOS
+    // ==========================
+    $("#year").textContent = new Date().getFullYear();
+
+    $("#btnCarrito").addEventListener("click", openCart);
+    $("#closeCart").addEventListener("click", closeCart);
+    $("#backdrop").addEventListener("click", closeCart);
+
+    $("#btnCatalogo").addEventListener("click", ()=>{
+      document.getElementById("catalogo").scrollIntoView({behavior:"smooth"});
+    });
+
+    $("#goShop").addEventListener("click", ()=>{
+      document.getElementById("catalogo").scrollIntoView({behavior:"smooth"});
+    });
+
+    $("#goWhats").addEventListener("click", ()=>{
+      window.open(WHATSAPP_URL("Hola! Quiero hacer un pedido en XCUSTOM."), "_blank");
+    });
+
+    $("#goIG").addEventListener("click", ()=>{
+      window.open(INSTAGRAM_URL, "_blank");
+    });
+
+    $("#filter").addEventListener("change", (e)=>{
+      state.filter = e.target.value;
+      renderProducts();
+    });
+
+    $("#search").addEventListener("input", (e)=>{
+      state.search = e.target.value;
+      renderProducts();
+    });
+
+    $("#btnWhatsPay").addEventListener("click", ()=>{
+      if(state.cart.length === 0){
+        toastMsg("Tu carrito está vacío");
+        return;
+      }
+      const msg = buildOrderSummary();
+      window.open(WHATSAPP_URL(msg), "_blank");
+    });
+
+    $("#btnCopy").addEventListener("click", async ()=>{
+      if(state.cart.length === 0){
+        toastMsg("Tu carrito está vacío");
+        return;
+      }
+      const msg = buildOrderSummary();
+      try{
+        await navigator.clipboard.writeText(msg);
+        toastMsg("Resumen copiado ✅");
+      }catch(e){
+        // fallback
+        const ta = document.createElement("textarea");
+        ta.value = msg;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand("copy");
+        ta.remove();
+        toastMsg("Resumen copiado ✅");
+      }
+    });
+
+    // init
+    renderProducts();
+    renderCartBadge();
+  </script>
+</body>
+</html>
