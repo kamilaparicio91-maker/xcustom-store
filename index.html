@@ -1,10 +1,10 @@
 <!doctype html>
 <html lang="es">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>XCUSTOM — Tienda online</title>
-  <meta name="description" content="XCUSTOM: ropa personalizada para FiveM. Compra online." />
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>XCUSTOM — Tienda Online</title>
+  <meta name="description" content="XCUSTOM: tienda online verde/negro con carrito + pago con tarjeta (Stripe) + WhatsApp."/>
 
   <style>
     :root{
@@ -25,12 +25,14 @@
     body{
       margin:0;
       font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
-      background: radial-gradient(1200px 600px at 20% -10%, rgba(25,255,106,.18), transparent 60%),
-                  radial-gradient(800px 500px at 90% 10%, rgba(0,200,83,.14), transparent 55%),
-                  var(--bg);
+      background:
+        radial-gradient(1200px 600px at 20% -10%, rgba(25,255,106,.18), transparent 60%),
+        radial-gradient(800px 500px at 90% 10%, rgba(0,200,83,.14), transparent 55%),
+        var(--bg);
       color:var(--text);
     }
     a{color:inherit;text-decoration:none}
+    code{color:var(--green)}
     .wrap{max-width:var(--max); margin:0 auto; padding:24px}
     .topbar{
       position:sticky; top:0; z-index:20;
@@ -43,10 +45,7 @@
       padding:14px 24px;
       max-width:var(--max); margin:0 auto;
     }
-    .brand{
-      display:flex; align-items:center; gap:12px;
-      user-select:none;
-    }
+    .brand{display:flex; align-items:center; gap:12px; user-select:none;}
     .logo{
       width:40px;height:40px;border-radius:12px;
       background:
@@ -55,14 +54,10 @@
       border:1px solid var(--border);
       box-shadow: 0 10px 30px rgba(0,0,0,.35);
     }
-    .brand h1{
-      font-size:16px; margin:0; letter-spacing:.12em;
-    }
-    .brand small{display:block;color:var(--muted);letter-spacing:normal;margin-top:2px}
-    .nav{
-      display:flex; gap:10px; align-items:center;
-    }
+    .brand h1{font-size:16px;margin:0;letter-spacing:.12em}
+    .brand small{display:block;color:var(--muted);margin-top:2px}
 
+    .nav{display:flex; gap:10px; align-items:center}
     .pill{
       display:inline-flex; align-items:center; gap:8px;
       padding:10px 12px; border-radius:999px;
@@ -87,9 +82,8 @@
       gap:18px;
       align-items:stretch;
     }
-    @media (max-width: 900px){
-      .hero{grid-template-columns:1fr}
-    }
+    @media (max-width: 900px){ .hero{grid-template-columns:1fr} }
+
     .heroCard{
       border:1px solid rgba(255,255,255,.08);
       background: linear-gradient(180deg, rgba(13,21,16,.8), rgba(10,16,12,.6));
@@ -113,7 +107,6 @@
       padding:8px 10px; border-radius:999px;
       border:1px solid var(--border);
       background: rgba(25,255,106,.08);
-      color:var(--text);
       font-size:12px;
     }
     .kicker .dot{width:8px;height:8px;border-radius:50%;background:var(--green)}
@@ -123,8 +116,8 @@
       letter-spacing:-.02em;
     }
     .heroTitle span{color:var(--green)}
-    .heroText{margin:0;color:var(--muted);max-width:60ch}
-    .heroActions{display:flex; gap:10px; margin-top:16px; flex-wrap:wrap}
+    .heroText{margin:0;color:var(--muted);max-width:62ch}
+
     .btn{
       display:inline-flex; align-items:center; justify-content:center; gap:10px;
       padding:12px 14px;
@@ -133,7 +126,7 @@
       background: rgba(13,21,16,.65);
       color: var(--text);
       cursor:pointer;
-      transition: transform .12s ease, border-color .12s ease, background .12s ease;
+      transition: transform .12s ease, border-color .12s ease;
       user-select:none;
     }
     .btn:hover{transform: translateY(-1px); border-color: var(--border)}
@@ -142,8 +135,9 @@
       border-color: var(--border);
       box-shadow: 0 16px 40px rgba(0,0,0,.35);
     }
-    .btn.primary strong{color:var(--green)}
-    .btn.ghost{background: rgba(10,16,12,.35)}
+    .btn.danger{border-color: rgba(255,255,255,.10); background: rgba(255,0,0,.08)}
+    .btn.small{padding:10px 12px; border-radius: 12px; font-size:13px}
+
     .panel{
       border:1px solid rgba(255,255,255,.08);
       background: rgba(13,21,16,.55);
@@ -153,6 +147,7 @@
     }
     .panel h3{margin:0 0 8px; font-size:14px; letter-spacing:.12em; color: var(--green)}
     .panel p{margin:0;color:var(--muted); font-size:13px; line-height:1.45}
+    .mini{font-size:12px;color:var(--muted)}
     .grid{
       display:grid;
       grid-template-columns: repeat(3, 1fr);
@@ -161,6 +156,7 @@
     }
     @media (max-width: 900px){ .grid{grid-template-columns: repeat(2,1fr)} }
     @media (max-width: 560px){ .grid{grid-template-columns: 1fr} }
+
     .card{
       border:1px solid rgba(255,255,255,.08);
       background: linear-gradient(180deg, rgba(13,21,16,.7), rgba(10,16,12,.45));
@@ -169,7 +165,7 @@
       box-shadow: 0 14px 40px rgba(0,0,0,.42);
       display:flex;
       flex-direction:column;
-      min-height: 320px;
+      min-height: 330px;
     }
     .thumb{
       height:140px;
@@ -187,15 +183,15 @@
       font-size:12px;
       border:1px solid var(--border);
       background: rgba(25,255,106,.08);
-      color: var(--text);
     }
     .cardBody{padding:14px; display:flex; flex-direction:column; gap:10px; flex:1}
     .titleRow{display:flex; justify-content:space-between; gap:10px; align-items:flex-start}
     .titleRow h4{margin:0; font-size:16px}
     .price{color:var(--green); font-weight:700}
     .desc{margin:0; color:var(--muted); font-size:13px; line-height:1.4}
-    .row{display:flex; gap:10px; align-items:center; justify-content:space-between}
-    .select, .input{
+
+    .row{display:flex; gap:10px; align-items:center; justify-content:space-between; flex-wrap:wrap}
+    .input,.select{
       width:100%;
       padding:10px 12px;
       border-radius: 12px;
@@ -204,16 +200,9 @@
       color: var(--text);
       outline:none;
     }
-    .select:focus, .input:focus{border-color: var(--border)}
-    .mini{font-size:12px; color: var(--muted)}
-    .footer{
-      margin:34px 0 10px;
-      color: var(--muted);
-      font-size:12px;
-      text-align:center;
-    }
+    .input:focus,.select:focus{border-color: var(--border)}
 
-    /* Drawer cart */
+    /* Cart drawer */
     .backdrop{
       position:fixed; inset:0;
       background: rgba(0,0,0,.55);
@@ -221,10 +210,9 @@
       z-index:50;
     }
     .drawer{
-      position:fixed;
-      top:0; right:0;
+      position:fixed; top:0; right:0;
       height:100%;
-      width:min(420px, 92vw);
+      width:min(440px, 92vw);
       background: rgba(7,11,8,.88);
       backdrop-filter: blur(14px);
       border-left: 1px solid rgba(255,255,255,.08);
@@ -256,33 +244,35 @@
     }
     .cartItem b{color:var(--text)}
     .cartItem small{display:block; color:var(--muted); margin-top:2px}
-    .qty{
-      display:flex; gap:8px; align-items:center; justify-content:flex-end;
-    }
+    .qty{display:flex; gap:8px; align-items:center; justify-content:flex-end;}
     .qty button{
-      width:32px; height:32px; border-radius:10px;
+      width:32px;height:32px;border-radius:10px;
       border:1px solid rgba(255,255,255,.10);
       background: rgba(7,11,8,.45);
       color: var(--text);
       cursor:pointer;
     }
-    .qty span{min-width:22px; text-align:center}
+    .qty span{min-width:22px;text-align:center}
     .drawerFoot{
       border-top:1px solid rgba(255,255,255,.08);
       padding:14px;
       display:flex; flex-direction:column; gap:10px;
     }
-    .totals{
-      display:flex; justify-content:space-between; align-items:center;
-      color: var(--text);
-    }
+    .totals{display:flex; justify-content:space-between; align-items:center;}
     .totals strong{color:var(--green)}
-    .note{
-      font-size:12px; color:var(--muted); line-height:1.35;
+    .note{font-size:12px;color:var(--muted);line-height:1.35}
+    .warn{
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(255,180,0,.06);
+      padding:10px 12px;
+      border-radius:14px;
+      color: var(--muted);
+      font-size:12px;
+      line-height:1.35;
+      display:none;
     }
     .toast{
-      position:fixed;
-      left:50%; bottom:16px;
+      position:fixed; left:50%; bottom:16px;
       transform: translateX(-50%);
       background: rgba(13,21,16,.85);
       border:1px solid var(--border);
@@ -294,6 +284,7 @@
       z-index:80;
       font-size:13px;
     }
+    .footer{margin:34px 0 10px; color: var(--muted); font-size:12px; text-align:center;}
   </style>
 </head>
 
@@ -304,13 +295,13 @@
         <div class="logo" aria-hidden="true"></div>
         <div>
           <h1>XCUSTOM</h1>
-          <small>Ropa personalizada para FiveM • Online</small>
+          <small>Tienda online • Verde/Negro • Pago con tarjeta + WhatsApp</small>
         </div>
       </div>
 
       <div class="nav">
-        <button class="pill" id="btnCatalogo" title="Ir al catálogo">Catálogo</button>
-        <button class="pill" id="btnCarrito" title="Abrir carrito">
+        <button class="pill" id="btnCatalogo">Catálogo</button>
+        <button class="pill" id="btnCarrito">
           <span class="dot" aria-hidden="true"></span>
           Carrito <strong id="cartCount">0</strong>
         </button>
@@ -322,41 +313,41 @@
     <section class="hero">
       <div class="heroCard">
         <div class="heroInner">
-          <div class="kicker"><span class="dot"></span> Entregas digitales / packs para servidor RP</div>
-          <h2 class="heroTitle">Tu drip en <span>verde</span>. Tu estilo en FiveM.</h2>
+          <div class="kicker"><span class="dot"></span> Checkout seguro con Stripe (Visa / MasterCard / Amex)</div>
+          <h2 class="heroTitle">Compra en <span>XCUSTOM</span> sin complicarte.</h2>
           <p class="heroText">
-            Compra packs de ropa, logos y personalizaciones. Agrega al carrito y finaliza tu pedido.
-            (Puedes conectar pagos reales luego con Stripe/PayPal.)
+            Agrega productos al carrito. Si quieres pagar con tarjeta, usamos enlaces de pago de Stripe (seguros).
+            Para pedidos múltiples o personalizados, finaliza por WhatsApp con el resumen del pedido.
           </p>
-          <div class="heroActions">
-            <button class="btn primary" id="goShop">Comprar ahora <strong>→</strong></button>
-            <button class="btn ghost" id="goWhats">Pedir por WhatsApp</button>
+          <div class="row" style="margin-top:16px">
+            <button class="btn primary" id="goShop">Comprar ahora →</button>
+            <button class="btn" id="goWhats">WhatsApp</button>
             <button class="btn" id="goIG">Instagram</button>
           </div>
         </div>
       </div>
 
       <aside class="panel">
-        <h3>INFO RÁPIDA</h3>
-        <p>✅ Packs digitales (YTD/YDD/PNG) • ✅ Diseños personalizados • ✅ Soporte por DM</p>
+        <h3>CONFIGURACIÓN RÁPIDA</h3>
+        <p class="mini">En el JS de abajo cambia:</p>
+        <p class="mini">• <code>WHATSAPP_NUMBER</code></p>
+        <p class="mini">• <code>INSTAGRAM_URL</code></p>
+        <p class="mini">• cada <code>stripeLink</code> (Payment Link de Stripe)</p>
         <div style="height:12px"></div>
-        <p><b style="color:var(--text)">Horarios:</b> Lun–Sáb</p>
-        <p><b style="color:var(--text)">Entrega:</b> 24–72h (depende del pedido)</p>
-        <p><b style="color:var(--text)">Contacto:</b> WhatsApp / Instagram</p>
-        <div style="height:12px"></div>
-        <p class="mini">Edita productos y precios en el JS abajo (array <code>PRODUCTS</code>).</p>
+        <p>✅ Tarjetas (Visa, etc.) se cobran en Stripe</p>
+        <p>✅ WhatsApp para pedidos múltiples/custom</p>
       </aside>
     </section>
 
     <section id="catalogo">
-      <div style="display:flex; gap:10px; align-items:center; justify-content:space-between; flex-wrap:wrap">
+      <div class="row">
         <div>
           <h3 style="margin:0; letter-spacing:.12em; color:var(--green)">CATÁLOGO</h3>
-          <p style="margin:6px 0 0; color:var(--muted); font-size:13px">Elige tu producto, opciones y agrega al carrito.</p>
+          <p style="margin:6px 0 0; color:var(--muted); font-size:13px">Agrega al carrito y paga con tarjeta o WhatsApp.</p>
         </div>
 
-        <div style="display:flex; gap:10px; align-items:center; min-width:min(520px, 100%); flex:1; justify-content:flex-end; flex-wrap:wrap">
-          <input class="input" id="search" placeholder="Buscar (hoodie, chaleco, logo...)" style="max-width:280px" />
+        <div class="row" style="min-width:min(560px, 100%); flex:1; justify-content:flex-end">
+          <input class="input" id="search" placeholder="Buscar (hoodie, chaleco, logo...)" style="max-width:280px"/>
           <select class="select" id="filter" style="max-width:220px">
             <option value="all">Todas las categorías</option>
             <option value="ropa">Ropa</option>
@@ -370,12 +361,10 @@
       <div class="grid" id="grid"></div>
     </section>
 
-    <div class="footer">
-      © <span id="year"></span> XCUSTOM • Hecho con estilo verde/negro • Front-end demo listo para conectar pagos.
-    </div>
+    <div class="footer">© <span id="year"></span> XCUSTOM • GitHub Pages (front-end) + Stripe Links + WhatsApp</div>
   </main>
 
-  <!-- Cart Drawer -->
+  <!-- Drawer carrito -->
   <div class="backdrop" id="backdrop"></div>
   <aside class="drawer" id="drawer" aria-label="Carrito">
     <div class="drawerHead">
@@ -388,24 +377,24 @@
 
       <div id="emptyCart" class="panel" style="display:none">
         <h3>VACÍO</h3>
-        <p>Tu carrito está vacío. Agrega productos del catálogo.</p>
+        <p>Agrega productos desde el catálogo.</p>
       </div>
 
       <div class="panel">
-        <h3>CHECKOUT</h3>
-        <p class="mini">Completa tus datos (esto se usa para armar el mensaje / resumen del pedido).</p>
+        <h3>DATOS (OPCIONAL)</h3>
+        <p class="mini">Se usan para armar el resumen del pedido.</p>
         <div style="height:10px"></div>
 
         <label class="mini">Nombre</label>
-        <input class="input" id="name" placeholder="Tu nombre" />
+        <input class="input" id="name" placeholder="Tu nombre"/>
 
         <div style="height:8px"></div>
         <label class="mini">Email</label>
-        <input class="input" id="email" placeholder="tucorreo@gmail.com" />
+        <input class="input" id="email" placeholder="tucorreo@gmail.com"/>
 
         <div style="height:8px"></div>
         <label class="mini">Notas del pedido</label>
-        <input class="input" id="notes" placeholder="Colores, server, detalles..." />
+        <input class="input" id="notes" placeholder="Colores, server, detalles..."/>
       </div>
     </div>
 
@@ -415,11 +404,18 @@
         <strong id="total">$0</strong>
       </div>
 
-      <button class="btn primary" id="btnWhatsPay">Finalizar por WhatsApp</button>
-      <button class="btn" id="btnCopy">Copiar resumen del pedido</button>
+      <div class="warn" id="multiWarn">
+        Tu carrito tiene <b>varios productos</b>. En GitHub Pages (sin backend) el pago con tarjeta se hace por
+        <b>enlace por producto</b>. Para pagar todo junto, finaliza por WhatsApp o pide que te lo conecte con backend.
+      </div>
+
+      <button class="btn primary" id="btnCardPay">Pagar con tarjeta 💳</button>
+      <button class="btn" id="btnWhatsPay">Finalizar por WhatsApp</button>
+      <button class="btn small" id="btnCopy">Copiar resumen</button>
+      <button class="btn small danger" id="btnClear">Vaciar carrito</button>
 
       <div class="note">
-        Para pagos con tarjeta: integra Stripe/PayPal (te lo puedo dejar listo si me dices cuál vas a usar).
+        Pago con tarjeta usa Stripe (seguro). Nunca recogemos números de tarjeta en esta web.
       </div>
     </div>
   </aside>
@@ -427,89 +423,74 @@
   <div class="toast" id="toast">Listo ✅</div>
 
   <script>
-    // ==========================
-    // 1) EDITA AQUÍ TUS PRODUCTOS
-    // ==========================
+    // =========================================================
+    // 1) CONFIGURA AQUÍ (CAMBIA ESTO)
+    // =========================================================
     const CURRENCY = "USD";
-    const WHATSAPP_NUMBER = "15551234567"; // <--- CAMBIA: ej. 1786xxxxxxx (sin + ni espacios)
-    const INSTAGRAM_URL = "https://instagram.com/"; // <--- CAMBIA
-    const WHATSAPP_URL = (msg) => `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`;
+    const WHATSAPP_NUMBER = "15551234567"; // <-- cambia: ej. 1786XXXXXXX (sin +, sin espacios)
+    const INSTAGRAM_URL = "https://instagram.com/tuinstagram"; // <-- cambia
 
+    // Productos: agrega tu Stripe Payment Link por producto (Payment Links)
+    // Ejemplo de link: https://buy.stripe.com/xxxxxxxxxxxx
     const PRODUCTS = [
       {
-        id: "hoodie_xcustom",
-        name: "Hoodie XCUSTOM (Pack)",
-        category: "ropa",
-        price: 25,
-        tag: "Popular",
-        desc: "Hoodie para FiveM + texturas (incluye variantes).",
-        options: [
-          { key: "talla", label: "Talla", values: ["S","M","L","XL"] },
-          { key: "color", label: "Color", values: ["Verde/Negro","Negro","Verde","Custom"] }
+        id:"hoodie_xcustom",
+        name:"Hoodie XCUSTOM (Pack)",
+        category:"ropa",
+        price:25,
+        tag:"Popular",
+        desc:"Hoodie para FiveM + texturas (incluye variantes).",
+        stripeLink:"https://buy.stripe.com/REEMPLAZA_ESTE_LINK",
+        options:[
+          {key:"talla", label:"Talla", values:["S","M","L","XL"]},
+          {key:"color", label:"Color", values:["Verde/Negro","Negro","Verde","Custom"]}
         ]
       },
       {
-        id: "chaleco_tactico",
-        name: "Chaleco Táctico (Custom)",
-        category: "ropa",
-        price: 35,
-        tag: "Custom",
-        desc: "Chaleco + pistolera (según tu modelo).",
-        options: [
-          { key: "estilo", label: "Estilo", values: ["Ligero","Pesado","Con parches"] },
-          { key: "detalle", label: "Detalle", values: ["RTZ / Texto","Logo XCUSTOM","Full custom"] }
+        id:"chaleco_tactico",
+        name:"Chaleco Táctico (Custom)",
+        category:"ropa",
+        price:35,
+        tag:"Custom",
+        desc:"Chaleco + pistolera (según tu modelo).",
+        stripeLink:"https://buy.stripe.com/REEMPLAZA_ESTE_LINK",
+        options:[
+          {key:"estilo", label:"Estilo", values:["Ligero","Pesado","Con parches"]},
+          {key:"detalle", label:"Detalle", values:["Texto/Iniciales","Logo XCUSTOM","Full custom"]}
         ]
       },
       {
-        id: "logo_xcustom",
-        name: "Logo XCUSTOM (PNG)",
-        category: "logos",
-        price: 15,
-        tag: "PNG",
-        desc: "Logo limpio para redes/servidor. Fondo transparente.",
-        options: [
-          { key: "estilo", label: "Estilo", values: ["Minimal","Graffiti","Patch/Embroidered"] }
+        id:"logo_xcustom",
+        name:"Logo XCUSTOM (PNG)",
+        category:"logos",
+        price:15,
+        tag:"PNG",
+        desc:"Logo limpio para redes/servidor. Fondo transparente.",
+        stripeLink:"https://buy.stripe.com/REEMPLAZA_ESTE_LINK",
+        options:[
+          {key:"estilo", label:"Estilo", values:["Minimal","Graffiti","Patch/Embroidered"]}
         ]
       },
       {
-        id: "pack_camisas",
-        name: "Pack Camisas (2 modelos)",
-        category: "packs",
-        price: 30,
-        tag: "Pack",
-        desc: "2 camisas listas para showcase / servidor.",
-        options: [
-          { key: "tema", label: "Tema", values: ["Verde/Negro","Neón","Oscuro","Custom"] }
-        ]
-      },
-      {
-        id: "banner_discord",
-        name: "Banner Discord / Web",
-        category: "addons",
-        price: 12,
-        tag: "Add-on",
-        desc: "Banner para Discord, web o store (alta calidad).",
-        options: [
-          { key: "medida", label: "Medida", values: ["1920x1080","2560x1440","Custom"] }
-        ]
-      },
-      {
-        id: "pack_texturas",
-        name: "Pack Texturas (YTD)",
-        category: "packs",
-        price: 28,
-        tag: "YTD",
-        desc: "Texturas listas (2048) para ropa / accesorios.",
-        options: [
-          { key: "cantidad", label: "Cantidad", values: ["5","10","20"] }
+        id:"pack_texturas",
+        name:"Pack Texturas (YTD)",
+        category:"packs",
+        price:28,
+        tag:"YTD",
+        desc:"Texturas 2048 listas para ropa / accesorios.",
+        stripeLink:"https://buy.stripe.com/REEMPLAZA_ESTE_LINK",
+        options:[
+          {key:"cantidad", label:"Cantidad", values:["5","10","20"]}
         ]
       }
     ];
 
-    // ==========================
-    // 2) LÓGICA DE LA TIENDA
-    // ==========================
-    const $ = (q) => document.querySelector(q);
+    const WA = (msg)=>`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`;
+
+    // =========================================================
+    // 2) LÓGICA (NO TOCAR SI NO QUIERES)
+    // =========================================================
+    const $ = (q)=>document.querySelector(q);
     const grid = $("#grid");
     const cartCount = $("#cartCount");
     const drawer = $("#drawer");
@@ -518,6 +499,7 @@
     const emptyCart = $("#emptyCart");
     const totalEl = $("#total");
     const toast = $("#toast");
+    const multiWarn = $("#multiWarn");
 
     const state = {
       cart: loadCart(),
@@ -526,80 +508,69 @@
     };
 
     function money(n){
-      return new Intl.NumberFormat("en-US", { style:"currency", currency: CURRENCY }).format(n);
+      return new Intl.NumberFormat("en-US",{style:"currency",currency:CURRENCY}).format(n);
     }
-
-    function saveCart(){
-      localStorage.setItem("xcustom_cart_v1", JSON.stringify(state.cart));
-    }
-
-    function loadCart(){
-      try{
-        return JSON.parse(localStorage.getItem("xcustom_cart_v1")) || [];
-      }catch(e){
-        return [];
-      }
-    }
-
     function toastMsg(msg="Listo ✅"){
       toast.textContent = msg;
-      toast.style.display = "block";
+      toast.style.display="block";
       clearTimeout(window.__t);
-      window.__t = setTimeout(()=> toast.style.display="none", 1400);
+      window.__t=setTimeout(()=>toast.style.display="none", 1400);
+    }
+    function saveCart(){ localStorage.setItem("xcustom_cart_v2", JSON.stringify(state.cart)); }
+    function loadCart(){
+      try{ return JSON.parse(localStorage.getItem("xcustom_cart_v2")) || []; }
+      catch(e){ return []; }
     }
 
-    function openCart(){
-      drawer.classList.add("open");
-      backdrop.classList.add("open");
-      renderCart();
-    }
-    function closeCart(){
-      drawer.classList.remove("open");
-      backdrop.classList.remove("open");
-    }
+    function openCart(){ drawer.classList.add("open"); backdrop.classList.add("open"); renderCart(); }
+    function closeCart(){ drawer.classList.remove("open"); backdrop.classList.remove("open"); }
 
     function renderProducts(){
       const items = PRODUCTS.filter(p=>{
-        const okCat = state.filter === "all" ? true : p.category === state.filter;
+        const okCat = state.filter==="all" ? true : p.category===state.filter;
         const q = state.search.trim().toLowerCase();
         const okSearch = !q ? true : (p.name.toLowerCase().includes(q) || p.desc.toLowerCase().includes(q));
         return okCat && okSearch;
       });
 
       grid.innerHTML = items.map(p=>{
-        const optionHtml = (p.options||[]).map(opt=>{
-          return `
-            <div>
-              <div class="mini" style="margin-bottom:6px">${opt.label}</div>
-              <select class="select" data-opt="${opt.key}" data-pid="${p.id}">
-                ${opt.values.map(v=>`<option value="${escapeHtml(v)}">${escapeHtml(v)}</option>`).join("")}
-              </select>
-            </div>
-          `;
-        }).join("");
+        const optionHtml = (p.options||[]).map(opt=>`
+          <div>
+            <div class="mini" style="margin-bottom:6px">${escapeHtml(opt.label)}</div>
+            <select class="select" data-opt="${escapeAttr(opt.key)}" data-pid="${escapeAttr(p.id)}">
+              ${opt.values.map(v=>`<option value="${escapeAttr(v)}">${escapeHtml(v)}</option>`).join("")}
+            </select>
+          </div>
+        `).join("");
 
         return `
           <article class="card">
-            <div class="thumb">
-              <div class="badge">${escapeHtml(p.tag || "XCUSTOM")}</div>
-            </div>
+            <div class="thumb"><div class="badge">${escapeHtml(p.tag||"XCUSTOM")}</div></div>
             <div class="cardBody">
               <div class="titleRow">
                 <h4>${escapeHtml(p.name)}</h4>
                 <div class="price">${money(p.price)}</div>
               </div>
               <p class="desc">${escapeHtml(p.desc)}</p>
+
               ${optionHtml ? `<div style="display:grid; gap:10px">${optionHtml}</div>` : ""}
+
               <div class="row" style="margin-top:auto">
-                <span class="mini">Entrega: 24–72h</span>
-                <button class="btn primary" data-add="${p.id}">Agregar</button>
+                <span class="mini">Pago tarjeta: Stripe</span>
+                <button class="btn primary" data-add="${escapeAttr(p.id)}">Agregar</button>
+              </div>
+
+              <div class="row">
+                <a class="btn small" href="${escapeAttr(p.stripeLink)}" target="_blank" rel="noopener">
+                  Pagar este producto 💳
+                </a>
+                <button class="btn small" data-waone="${escapeAttr(p.id)}">Pedir por WhatsApp</button>
               </div>
             </div>
           </article>
         `;
       }).join("");
 
-      // Add handlers
       grid.querySelectorAll("[data-add]").forEach(btn=>{
         btn.addEventListener("click", ()=>{
           const pid = btn.getAttribute("data-add");
@@ -612,74 +583,83 @@
           addToCart(product, selected);
         });
       });
+
+      grid.querySelectorAll("[data-waone]").forEach(btn=>{
+        btn.addEventListener("click", ()=>{
+          const pid = btn.getAttribute("data-waone");
+          const product = PRODUCTS.find(x=>x.id===pid);
+          const msg = `Hola! Quiero este producto:\n- ${product.name}\nPrecio: ${money(product.price)}\n\n¿Disponible?`;
+          window.open(WA(msg), "_blank");
+        });
+      });
     }
 
     function addToCart(product, selectedOptions){
-      // same product+options => increase qty
-      const key = product.id + "::" + JSON.stringify(selectedOptions || {});
-      const found = state.cart.find(i=> i.key === key);
-      if(found){
-        found.qty += 1;
-      }else{
-        state.cart.push({
-          key,
-          id: product.id,
-          name: product.name,
-          price: product.price,
-          options: selectedOptions || {},
-          qty: 1
-        });
-      }
+      // agrupa por producto+opciones
+      const key = product.id + "::" + JSON.stringify(selectedOptions||{});
+      const found = state.cart.find(i=>i.key===key);
+      if(found) found.qty += 1;
+      else state.cart.push({
+        key,
+        id: product.id,
+        name: product.name,
+        price: product.price,
+        stripeLink: product.stripeLink,
+        options: selectedOptions||{},
+        qty: 1
+      });
       saveCart();
       renderCartBadge();
-      toastMsg("Agregado al carrito ✅");
+      toastMsg("Agregado ✅");
     }
 
     function changeQty(key, delta){
       const item = state.cart.find(i=>i.key===key);
       if(!item) return;
       item.qty += delta;
-      if(item.qty <= 0){
-        state.cart = state.cart.filter(i=>i.key!==key);
-      }
+      if(item.qty<=0) state.cart = state.cart.filter(i=>i.key!==key);
       saveCart();
       renderCart();
       renderCartBadge();
     }
 
-    function cartTotal(){
-      return state.cart.reduce((sum,i)=> sum + i.price*i.qty, 0);
-    }
-
+    function cartTotal(){ return state.cart.reduce((s,i)=> s + i.price*i.qty, 0); }
     function renderCartBadge(){
-      const count = state.cart.reduce((sum,i)=> sum + i.qty, 0);
+      const count = state.cart.reduce((s,i)=> s + i.qty, 0);
       cartCount.textContent = count;
     }
 
     function renderCart(){
       renderCartBadge();
-      const total = cartTotal();
-      totalEl.textContent = money(total);
+      totalEl.textContent = money(cartTotal());
 
-      if(state.cart.length === 0){
+      if(state.cart.length===0){
         cartItemsEl.innerHTML = "";
         emptyCart.style.display = "block";
+        multiWarn.style.display = "none";
         return;
-      }else{
-        emptyCart.style.display = "none";
       }
+      emptyCart.style.display = "none";
+
+      // detecta si hay varios productos distintos (por id)
+      const uniqueIds = new Set(state.cart.map(i=>i.id));
+      multiWarn.style.display = uniqueIds.size > 1 ? "block" : "none";
 
       cartItemsEl.innerHTML = state.cart.map(i=>{
         const optText = Object.keys(i.options||{}).length
-          ? Object.entries(i.options).map(([k,v])=> `${k}: ${v}`).join(" • ")
+          ? Object.entries(i.options).map(([k,v])=>`${k}: ${v}`).join(" • ")
           : "Sin opciones";
-
         return `
           <div class="cartItem">
             <div>
               <b>${escapeHtml(i.name)}</b>
               <small>${escapeHtml(optText)}</small>
               <small style="margin-top:6px;color:var(--green)">${money(i.price)} c/u</small>
+              <div class="row" style="margin-top:10px">
+                <a class="btn small" href="${escapeAttr(i.stripeLink)}" target="_blank" rel="noopener">
+                  Pagar este ítem 💳
+                </a>
+              </div>
             </div>
             <div class="qty">
               <button aria-label="menos" data-q="-1" data-k="${escapeAttr(i.key)}">−</button>
@@ -692,7 +672,7 @@
 
       cartItemsEl.querySelectorAll("[data-q]").forEach(b=>{
         b.addEventListener("click", ()=>{
-          const d = parseInt(b.getAttribute("data-q"), 10);
+          const d = parseInt(b.getAttribute("data-q"),10);
           const k = b.getAttribute("data-k");
           changeQty(k, d);
         });
@@ -722,7 +702,7 @@
       lines.push("");
       lines.push(`TOTAL: ${money(total)}`);
       lines.push("");
-      lines.push("¿Cómo deseas pagar? (Tarjeta/PayPal/Transferencia)");
+      lines.push("Pago: Tarjeta (Stripe) o coordinar por WhatsApp.");
       return lines.join("\n");
     }
 
@@ -731,13 +711,11 @@
         "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
       }[s]));
     }
-    function escapeAttr(str){
-      return String(str).replace(/"/g, "&quot;");
-    }
+    function escapeAttr(str){ return String(str).replace(/"/g, "&quot;"); }
 
-    // ==========================
-    // 3) EVENTOS
-    // ==========================
+    // =========================================================
+    // 3) EVENTOS UI
+    // =========================================================
     $("#year").textContent = new Date().getFullYear();
 
     $("#btnCarrito").addEventListener("click", openCart);
@@ -747,15 +725,13 @@
     $("#btnCatalogo").addEventListener("click", ()=>{
       document.getElementById("catalogo").scrollIntoView({behavior:"smooth"});
     });
-
     $("#goShop").addEventListener("click", ()=>{
       document.getElementById("catalogo").scrollIntoView({behavior:"smooth"});
     });
 
     $("#goWhats").addEventListener("click", ()=>{
-      window.open(WHATSAPP_URL("Hola! Quiero hacer un pedido en XCUSTOM."), "_blank");
+      window.open(WA("Hola! Quiero hacer un pedido en XCUSTOM."), "_blank");
     });
-
     $("#goIG").addEventListener("click", ()=>{
       window.open(INSTAGRAM_URL, "_blank");
     });
@@ -764,40 +740,59 @@
       state.filter = e.target.value;
       renderProducts();
     });
-
     $("#search").addEventListener("input", (e)=>{
       state.search = e.target.value;
       renderProducts();
     });
 
-    $("#btnWhatsPay").addEventListener("click", ()=>{
-      if(state.cart.length === 0){
-        toastMsg("Tu carrito está vacío");
+    // Pago con tarjeta:
+    // - si el carrito tiene 1 producto (mismo id), abre el Stripe Link de ese producto
+    // - si hay varios productos distintos, muestra aviso y recomienda WhatsApp
+    $("#btnCardPay").addEventListener("click", ()=>{
+      if(state.cart.length===0){ toastMsg("Carrito vacío"); return; }
+      const uniqueIds = new Set(state.cart.map(i=>i.id));
+      if(uniqueIds.size > 1){
+        toastMsg("Varios productos: usa WhatsApp");
+        openCart();
         return;
       }
-      const msg = buildOrderSummary();
-      window.open(WHATSAPP_URL(msg), "_blank");
+      // un solo producto (puede tener opciones/qty)
+      const first = state.cart[0];
+      if(!first.stripeLink || first.stripeLink.includes("REEMPLAZA_ESTE_LINK")){
+        toastMsg("Falta tu link de Stripe");
+        return;
+      }
+      window.open(first.stripeLink, "_blank");
+    });
+
+    $("#btnWhatsPay").addEventListener("click", ()=>{
+      if(state.cart.length===0){ toastMsg("Carrito vacío"); return; }
+      window.open(WA(buildOrderSummary()), "_blank");
     });
 
     $("#btnCopy").addEventListener("click", async ()=>{
-      if(state.cart.length === 0){
-        toastMsg("Tu carrito está vacío");
-        return;
-      }
+      if(state.cart.length===0){ toastMsg("Carrito vacío"); return; }
       const msg = buildOrderSummary();
       try{
         await navigator.clipboard.writeText(msg);
-        toastMsg("Resumen copiado ✅");
+        toastMsg("Copiado ✅");
       }catch(e){
-        // fallback
-        const ta = document.createElement("textarea");
-        ta.value = msg;
+        const ta=document.createElement("textarea");
+        ta.value=msg;
         document.body.appendChild(ta);
         ta.select();
         document.execCommand("copy");
         ta.remove();
-        toastMsg("Resumen copiado ✅");
+        toastMsg("Copiado ✅");
       }
+    });
+
+    $("#btnClear").addEventListener("click", ()=>{
+      state.cart = [];
+      saveCart();
+      renderCart();
+      renderCartBadge();
+      toastMsg("Carrito vacío ✅");
     });
 
     // init
